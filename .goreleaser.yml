@@ -1,0 +1,46 @@
+project_name: saml-auth-proxy
+gomod:
+  proxy: true
+builds:
+- env:
+  - CGO_ENABLED=0
+  goos:
+    - linux
+    - windows
+    - darwin
+  goarch:
+    - amd64
+    - arm
+archives:
+  - replacements:
+      darwin: macosx
+      386: x86_32
+      amd64: x86_64
+    format: binary
+    files:
+      - none*
+dockers:
+  - image_templates:
+      - "itzg/{{.ProjectName}}:latest"
+      - "itzg/{{.ProjectName}}:{{ .Tag }}"
+    dockerfile: Dockerfile.release
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "snapshot-{{ .ShortCommit }}"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+    - '^docs:'
+    - '^misc:'
+    - '^ci:'
+    - '^test:'
+release:
+  prerelease: auto
+scoop:
+  bucket:
+    owner: itzg
+    name: scoop-bucket
+  license: Apache2
+  description: Provides a SAML SP authentication proxy for backend web services
